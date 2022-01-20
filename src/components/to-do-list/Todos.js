@@ -1,15 +1,17 @@
 import { database } from "../../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useRef } from "react";
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { useRef, useEffect, useState } from "react";
 
 export const Todos = () => {
 	const todoRef = useRef();
+	const [todos, setTodos] = useState("");
+	const todosCollection = collection(database, "todos");
 
 	async function handleSubmit(e) {
 		e.preventDefault();
 
 		try {
-			const docRef = await addDoc(collection(database, "todos"), {
+			const docRef = await addDoc(todosCollection, {
 				todo: todoRef.current.value,
 			});
 
@@ -19,8 +21,17 @@ export const Todos = () => {
 		}
 	}
 
+	useEffect(() => {
+		const getTodos = async () => {
+			const data = await getDocs(todosCollection);
+			setTodos(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+		};
+
+		getTodos();
+	}, [todos]);
+
 	return (
-		<div className="w-full h-full flex justify-center items-center">
+		<div className="w-full h-full flex justify-center items-center flex-col">
 			<div className="mt-4 border-2">
 				<h1>TO DO LIST</h1>
 				<form className="form" onSubmit={handleSubmit}>
@@ -38,6 +49,10 @@ export const Todos = () => {
 					</div>
 				</form>
 			</div>
+			{todos &&
+				todos.map((todo) => {
+					return <p>{todo.todo}</p>;
+				})}
 		</div>
 	);
 };
