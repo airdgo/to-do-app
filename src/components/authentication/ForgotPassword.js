@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useState } from "react/cjs/react.development";
-import { useAuth } from "../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 import { Link } from "react-router-dom";
 
 export const ForgotPassword = () => {

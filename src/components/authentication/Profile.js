@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react/cjs/react.development";
-import { useAuth } from "../context/AuthProvider";
+import { useAuth } from "../../context/AuthProvider";
 
-export const Dashboard = () => {
+export const Profile = () => {
 	const { currentUser, logout } = useAuth();
 	const [error, setError] = useState("");
 	const navigate = useNavigate("");
@@ -21,7 +21,7 @@ export const Dashboard = () => {
 
 	return (
 		<div>
-			{currentUser && <h1>Welcome {currentUser.mail}</h1>}
+			{currentUser && <h1>Welcome {currentUser.email}</h1>}
 			<button
 				className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
 				onClick={handleLogout}

@@ -1,10 +1,11 @@
-import { Signup } from "./components/Signup";
-import { Dashboard } from "./components/Dashboard";
-import { Login } from "./components/Login";
-import { ForgotPassword } from "./components/ForgotPassword";
+import { Signup } from "./components/authentication/Signup";
+import { Profile } from "./components/authentication/Profile";
+import { Login } from "./components/authentication/Login";
+import { ForgotPassword } from "./components/authentication/ForgotPassword";
 import { AuthProvider } from "./context/AuthProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { PrivateRoute } from "./components/PrivateRoute";
+import { PrivateRoute } from "./components/authentication/PrivateRoute";
+import { Dashboard } from "./components/to-do-list/Dashboard";
 
 function App() {
 	return (
@@ -12,6 +13,7 @@ function App() {
 			<Router>
 				<AuthProvider>
 					<Routes>
+						{/* To do list */}
 						<Route
 							exact
 							path="/"
@@ -21,6 +23,18 @@ function App() {
 								</PrivateRoute>
 							}
 						/>
+
+						{/* Profile */}
+						<Route
+							path="/user"
+							element={
+								<PrivateRoute>
+									<Profile />
+								</PrivateRoute>
+							}
+						/>
+
+						{/* Auth */}
 						<Route path="/signup" element={<Signup />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/forgot-password" element={<ForgotPassword />} />
