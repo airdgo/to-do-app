@@ -1,15 +1,14 @@
 import { useRef } from "react";
 import { useState } from "react/cjs/react.development";
 import { useAuth } from "../context/AuthProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export const Login = () => {
+export const ForgotPassword = () => {
 	const emailRef = useRef("");
-	const passwordRef = useRef("");
-	const { login } = useAuth();
+	const { resetPassword } = useAuth();
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
+	const [message, setMessage] = useState("");
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -25,22 +24,28 @@ export const Login = () => {
 		try {
 			setLoading(true);
 			setError("");
-			await login(emailRef.current.value, passwordRef.current.value);
-			navigate("/");
+			await resetPassword(emailRef.current.value);
+			setMessage("Check your inbox for further instructions");
 		} catch {
-			setError("Failed to log in");
+			setError("Failed to reset password");
 		}
 
 		setLoading(false);
 	}
 
 	return (
-		<div className="w-full h-screen flex justify-center items-center flex-col">
+		<div className="w-full min-h-screen flex justify-center items-center flex-col">
 			<form
 				className="max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
 				onSubmit={handleSubmit}
 			>
-				<h1 className="text-center font-bold text-xl mb-3">Log In</h1>
+				<h1 className="text-center font-bold text-xl mb-3">Reset Password</h1>
+				{message && (
+					<div className=" text-sm bg-green-100 text-green-900 border-green-600 p-4 mb-4 border rounded">
+						{message}
+					</div>
+				)}
+
 				<div className="mb-4">
 					<label className="block text-gray-700 text-sm font-bold mb-2">
 						Email
@@ -52,18 +57,6 @@ export const Login = () => {
 						required
 						ref={emailRef}
 					/>
-				</div>
-				<div className="mb-5">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Password
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-						type="password"
-						placeholder="**********"
-						required
-						ref={passwordRef}
-					/>
 					{error && <p className="text-red-500 text-xs italic">{error}</p>}
 				</div>
 				<div className="flex items-center justify-between">
@@ -72,19 +65,13 @@ export const Login = () => {
 						type="submit"
 						disabled={loading}
 					>
-						Log In
+						Reset Password
 					</button>
-				</div>
-				<div className="mt-5 text-center">
-					<Link to="/forgot-password" className=" text-violet-400 underline ">
-						Forgot password?
-					</Link>
 				</div>
 			</form>
 			<div>
-				Don't have an account?{" "}
-				<Link to="/signup" className=" text-violet-400 underline">
-					Sign Up!
+				<Link to="/login" className=" text-violet-400 underline">
+					Log In!
 				</Link>
 			</div>
 		</div>
