@@ -1,16 +1,23 @@
 import { database } from "../../firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, setDoc, getDocs } from "firebase/firestore";
 import { useRef, useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthProvider";
 
 export const Todos = () => {
 	const todoRef = useRef();
 	const [todos, setTodos] = useState("");
-	const todosCollection = collection(database, "todos");
+	const { currentUser } = useAuth();
+	const todosCollection = collection(database, currentUser.uid);
+	// const userDoc = doc(database, "users", currentUser.uid);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
+		console.log(currentUser.uid);
+		let id = Math.floor(Math.random() * 1000) + 1;
 
 		try {
+			// await setDoc(userDoc, { id: todoRef.current.value });
+
 			const docRef = await addDoc(todosCollection, {
 				todo: todoRef.current.value,
 			});
@@ -21,6 +28,7 @@ export const Todos = () => {
 		}
 	}
 
+	//Read Data
 	useEffect(() => {
 		const getTodos = async () => {
 			const data = await getDocs(todosCollection);
