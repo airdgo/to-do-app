@@ -1,11 +1,11 @@
 import { Navbar } from "./Navbar";
-import { Todos } from "./Todos";
+import { Todos_copy } from "./Todos_copy";
 
 export const Dashboard = () => {
 	return (
 		<>
 			<Navbar />
-			<Todos />
+			<Todos_copy />
 		</>
 	);
 };
