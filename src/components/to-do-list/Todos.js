@@ -1,5 +1,5 @@
 import { database } from "../../firebase";
-import { collection, addDoc, setDoc, getDocs } from "firebase/firestore";
+import { setDoc, getDoc, doc } from "firebase/firestore";
 import { useRef, useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 
@@ -7,36 +7,43 @@ export const Todos = () => {
 	const todoRef = useRef();
 	const [todos, setTodos] = useState("");
 	const { currentUser } = useAuth();
-	const todosCollection = collection(database, currentUser.uid);
-	// const userDoc = doc(database, "users", currentUser.uid);
+	const userDoc = doc(database, "users", currentUser.uid);
 
 	async function handleSubmit(e) {
 		e.preventDefault();
 		console.log(currentUser.uid);
-		let id = Math.floor(Math.random() * 1000) + 1;
+
+		const id = Math.floor(Math.random() * 1000) + 1;
+		const todo = todoRef.current.value;
+		const newTodo = { id, todo };
+		const ls = [...todos, newTodo];
+
+		setTodos(ls);
+
+		const docData = { todos: ls };
 
 		try {
-			// await setDoc(userDoc, { id: todoRef.current.value });
-
-			const docRef = await addDoc(todosCollection, {
-				todo: todoRef.current.value,
-			});
-
-			console.log("Document written with ID: ", docRef.id);
+			await setDoc(userDoc, docData);
 		} catch (e) {
 			console.error("Error adding document: ", e);
 		}
 	}
 
-	//Read Data
-	useEffect(() => {
-		const getTodos = async () => {
-			const data = await getDocs(todosCollection);
-			setTodos(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-		};
+	// Read Data
+	// useEffect(() => {
+	// 	async function getTodos() {
+	// 		const docRef = doc(database, "users", currentUser.uid);
+	// 		const docSnap = await getDoc(docRef);
 
-		getTodos();
-	}, [todos]);
+	// 		if (docSnap.exists()) {
+	// 			setTodos(docSnap.data().todos);
+	// 		} else {
+	// 			console.log("No such document!");
+	// 		}
+	// 	}
+
+	// 	getTodos();
+	// }, []);
 
 	return (
 		<div className="w-full h-full flex justify-center items-center flex-col">
