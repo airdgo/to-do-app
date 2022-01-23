@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export const Navbar = () => {
 	return (
-		<nav className=" bg-stone-100 flex justify-between py-3 px-4">
+		<nav className="absolute w-full bg-stone-100 flex justify-between py-3 px-4">
 			<Link to="/">
 				<h3 className="text-blue-500 hover:text-blue-800">Logo</h3>
 			</Link>

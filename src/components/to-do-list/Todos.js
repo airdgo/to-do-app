@@ -9,7 +9,7 @@ export const Todos = () => {
 	const { currentUser } = useAuth();
 	const userDoc = doc(database, "users", currentUser.uid);
 
-	async function handleSubmit(e) {
+	function handleSubmit(e) {
 		e.preventDefault();
 		console.log(currentUser.uid);
 
@@ -19,15 +19,28 @@ export const Todos = () => {
 		const ls = [...todos, newTodo];
 
 		setTodos(ls);
-
-		const docData = { todos: ls };
-
-		try {
-			await setDoc(userDoc, docData);
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
 	}
+
+	// Write Data
+	// async function handleSubmit(e) {
+	// 	e.preventDefault();
+	// 	console.log(currentUser.uid);
+
+	// 	const id = Math.floor(Math.random() * 1000) + 1;
+	// 	const todo = todoRef.current.value;
+	// 	const newTodo = { id, todo };
+	// 	const ls = [...todos, newTodo];
+
+	// 	setTodos(ls);
+
+	// 	const docData = { todos: ls };
+
+	// 	try {
+	// 		await setDoc(userDoc, docData);
+	// 	} catch (e) {
+	// 		console.error("Error adding document: ", e);
+	// 	}
+	// }
 
 	// Read Data
 	// useEffect(() => {
@@ -46,21 +59,30 @@ export const Todos = () => {
 	// }, []);
 
 	return (
-		<div className="w-full h-full flex justify-center items-center flex-col">
-			<div className="mt-4 border-2">
-				<h1>TO DO LIST</h1>
-				<form className="form" onSubmit={handleSubmit}>
-					<input
-						className=" border-2 border-slate-500"
-						type="text"
-						placeholder="Add a New Task"
-						ref={todoRef}
-					/>
-					<div className="form-buttons">
-						<button className="bg-green-200" type="submit">
-							Add Note
-						</button>
-						<button className="bg-red-200">Clear List</button>
+		<div className="w-full min-h-screen flex items-center flex-col bg-todos-bg">
+			<div className=" w-10/12 max-w-3xl mt-40 border-2 border-white">
+				<form className=" px-16 py-8" onSubmit={handleSubmit}>
+					<h1 className="font-title text-6xl font-bold text-white mb-8 text-center">
+						TO DO LIST
+					</h1>
+					<div className="flex">
+						<input
+							className="border-2 border-white py-1 px-2 w-10/12 max-w-md"
+							type="text"
+							placeholder="Add a New To Do"
+							ref={todoRef}
+						/>
+						<div className="flex">
+							<button
+								className=" bg-white text-red-400 px-2 py-1 mx-4 w-24"
+								type="submit"
+							>
+								Add Note
+							</button>
+							<button className="bg-white text-red-400 px-2 py-1 w-24">
+								Clear List
+							</button>
+						</div>
 					</div>
 				</form>
 			</div>
