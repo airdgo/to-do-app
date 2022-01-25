@@ -7,6 +7,7 @@ module.exports = {
 			},
 			fontFamily: {
 				title: ["'Bebas Neue'", "Roboto", "sans-serif"],
+				button: ["Oswald", "sans-serif"],
 			},
 		},
 	},
