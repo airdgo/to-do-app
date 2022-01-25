@@ -10,54 +10,84 @@ export const Todos = () => {
 	const { currentUser } = useAuth();
 	const userDoc = doc(database, "users", currentUser.uid);
 
-	function handleSubmit(e) {
-		e.preventDefault();
-		console.log(currentUser.uid);
+	async function handleCompletition(id) {
+		const newTodos = todos.map((todo) => {
+			return todo.id === id
+				? { ...todo, isCompleted: !todo.isCompleted }
+				: todo;
+		});
 
-		const id = Math.floor(Math.random() * 1000) + 1;
-		const todo = todoRef.current.value;
-		const newTodo = { id, todo };
-		const ls = [...todos, newTodo];
+		setTodos(newTodos);
 
-		setTodos(ls);
+		const docData = { todos: newTodos };
+
+		try {
+			await setDoc(userDoc, docData);
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
 	}
 
-	// Write Data
-	// async function handleSubmit(e) {
+	async function handleDelete(id) {
+		const newTodos = todos.filter((todo) => todo.id !== id);
+		setTodos(newTodos);
+		const docData = { todos: newTodos };
+
+		try {
+			await setDoc(userDoc, docData);
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+	}
+
+	// function handleSubmit(e) {
 	// 	e.preventDefault();
 	// 	console.log(currentUser.uid);
 
 	// 	const id = Math.floor(Math.random() * 1000) + 1;
 	// 	const todo = todoRef.current.value;
-	// 	const newTodo = { id, todo };
+	// 	const newTodo = { id, todo, isCompleted: false };
 	// 	const ls = [...todos, newTodo];
 
 	// 	setTodos(ls);
-
-	// 	const docData = { todos: ls };
-
-	// 	try {
-	// 		await setDoc(userDoc, docData);
-	// 	} catch (e) {
-	// 		console.error("Error adding document: ", e);
-	// 	}
 	// }
 
+	// Write Data
+	async function handleSubmit(e) {
+		e.preventDefault();
+		console.log(currentUser.uid);
+
+		const id = Math.floor(Math.random() * 1000) + 1;
+		const todo = todoRef.current.value;
+		const newTodo = { id, todo, isCompleted: false };
+		const ls = [...todos, newTodo];
+
+		setTodos(ls);
+
+		const docData = { todos: ls };
+
+		try {
+			await setDoc(userDoc, docData);
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+	}
+
 	// Read Data
-	// useEffect(() => {
-	// 	async function getTodos() {
-	// 		const docRef = doc(database, "users", currentUser.uid);
-	// 		const docSnap = await getDoc(docRef);
+	useEffect(() => {
+		async function getTodos() {
+			const docRef = doc(database, "users", currentUser.uid);
+			const docSnap = await getDoc(docRef);
 
-	// 		if (docSnap.exists()) {
-	// 			setTodos(docSnap.data().todos);
-	// 		} else {
-	// 			console.log("No such document!");
-	// 		}
-	// 	}
+			if (docSnap.exists()) {
+				setTodos(docSnap.data().todos);
+			} else {
+				console.log("No such document!");
+			}
+		}
 
-	// 	getTodos();
-	// }, []);
+		getTodos();
+	}, []);
 
 	return (
 		<div className="w-full min-h-screen flex items-center flex-col bg-todos-bg">
@@ -93,9 +123,24 @@ export const Todos = () => {
 						todos.map((todo) => {
 							return (
 								<div className="bg-white font-mono flex items-center w-full px-3 py-2 my-4 border rounded">
-									<FaRegCircle className="text-3xl text-green-800 cursor-pointer hover:opacity-80" />
-									<p className="mx-4">{todo.todo}</p>
-									<FaRegTrashAlt className=" bg-[#9c0000] text-white text-3xl py-1 px-2 rounded cursor-pointer ml-auto hover:opacity-80" />
+									{todo.isCompleted === false ? (
+										<FaRegCircle
+											className="text-3xl text-green-800 cursor-pointer hover:opacity-80"
+											onClick={() => handleCompletition(todo.id)}
+										/>
+									) : (
+										<FaRegCheckCircle
+											className="text-3xl text-green-800 cursor-pointer hover:opacity-80"
+											onClick={() => handleCompletition(todo.id)}
+										/>
+									)}
+									<p className={`mx-4 ${todo.isCompleted && "line-through"}`}>
+										{todo.todo}
+									</p>
+									<FaRegTrashAlt
+										className=" bg-[#9c0000] text-white text-3xl py-1 px-2 rounded cursor-pointer ml-auto hover:opacity-80"
+										onClick={() => handleDelete(todo.id)}
+									/>
 								</div>
 							);
 						})}
