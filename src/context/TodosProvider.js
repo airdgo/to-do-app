@@ -10,7 +10,7 @@ export function useTodos() {
 }
 
 export const TodosProvider = ({ children }) => {
-	const [todos, setTodos] = useState("");
+	const [todos, setTodos] = useState([]);
 	const { currentUser } = useAuth();
 	const userDoc = doc(database, "users", currentUser.uid);
 
@@ -46,7 +46,7 @@ export const TodosProvider = ({ children }) => {
 			const docRef = doc(database, "users", currentUser.uid);
 			const docSnap = await getDoc(docRef);
 
-			if (docSnap.exists()) {
+			if (docSnap.exists() && todos) {
 				setTodos(docSnap.data().todos);
 			} else {
 				console.log("No such document!");
@@ -87,9 +87,10 @@ export const TodosProvider = ({ children }) => {
 
 	async function clearList(e) {
 		e.preventDefault();
-		setTodos("");
+		setTodos([]);
+		const docData = { todos: [] };
 		try {
-			await setDoc(userDoc, {});
+			await setDoc(userDoc, docData);
 		} catch (e) {
 			console.error("Error adding document: ", e);
 		}
