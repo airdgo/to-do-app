@@ -48,20 +48,24 @@ export const Todos = () => {
 							return (
 								<div
 									key={index}
-									className="bg-white font-mono flex items-center w-full px-3 py-2 my-4 border rounded"
+									className="bg-white font-mono flex items-center w-full px-3 py-2 my-4 border rounded-md"
 								>
 									{todo.isCompleted === false ? (
 										<FaRegCircle
-											className="text-3xl text-green-800 cursor-pointer hover:opacity-80"
+											className="text-2xl text-green-800 cursor-pointer hover:opacity-80"
 											onClick={() => handleCompletition(todo.id)}
 										/>
 									) : (
 										<FaRegCheckCircle
-											className="text-3xl text-green-800 cursor-pointer hover:opacity-80"
+											className="text-2xl text-green-800 cursor-pointer hover:opacity-80"
 											onClick={() => handleCompletition(todo.id)}
 										/>
 									)}
-									<p className={`mx-4 ${todo.isCompleted && "line-through"}`}>
+									<p
+										className={`mx-4 ${
+											todo.isCompleted && "line-through"
+										} text-sm`}
+									>
 										{todo.todo}
 									</p>
 									<FaRegTrashAlt
