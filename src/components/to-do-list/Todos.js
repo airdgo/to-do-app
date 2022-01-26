@@ -1,99 +1,19 @@
 import { FaRegCircle, FaRegCheckCircle, FaRegTrashAlt } from "react-icons/fa";
-import { database } from "../../firebase";
-import { setDoc, getDoc, doc } from "firebase/firestore";
-import { useRef, useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthProvider";
+import { useRef } from "react";
+import { useTodos } from "../../context/TodosProvider";
 
 export const Todos = () => {
 	const todoRef = useRef();
-	const [todos, setTodos] = useState("");
-	const { currentUser } = useAuth();
-	const userDoc = doc(database, "users", currentUser.uid);
-
-	async function handleCompletition(id) {
-		const newTodos = todos.map((todo) => {
-			return todo.id === id
-				? { ...todo, isCompleted: !todo.isCompleted }
-				: todo;
-		});
-
-		setTodos(newTodos);
-
-		const docData = { todos: newTodos };
-
-		try {
-			await setDoc(userDoc, docData);
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
-	}
-
-	async function handleDelete(id) {
-		const newTodos = todos.filter((todo) => todo.id !== id);
-		setTodos(newTodos);
-		const docData = { todos: newTodos };
-
-		try {
-			await setDoc(userDoc, docData);
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
-	}
-
-	// function handleSubmit(e) {
-	// 	e.preventDefault();
-	// 	console.log(currentUser.uid);
-
-	// 	const id = Math.floor(Math.random() * 1000) + 1;
-	// 	const todo = todoRef.current.value;
-	// 	const newTodo = { id, todo, isCompleted: false };
-	// 	const ls = [...todos, newTodo];
-
-	// 	setTodos(ls);
-	// }
-
-	// Write Data
-	async function handleSubmit(e) {
-		e.preventDefault();
-		console.log(currentUser.uid);
-
-		const id = Math.floor(Math.random() * 1000) + 1;
-		const todo = todoRef.current.value;
-		const newTodo = { id, todo, isCompleted: false };
-		const ls = [...todos, newTodo];
-
-		setTodos(ls);
-
-		const docData = { todos: ls };
-
-		try {
-			await setDoc(userDoc, docData);
-		} catch (e) {
-			console.error("Error adding document: ", e);
-		}
-	}
-
-	// Read Data
-	useEffect(() => {
-		async function getTodos() {
-			const docRef = doc(database, "users", currentUser.uid);
-			const docSnap = await getDoc(docRef);
-
-			if (docSnap.exists()) {
-				setTodos(docSnap.data().todos);
-			} else {
-				console.log("No such document!");
-			}
-		}
-
-		getTodos();
-	}, []);
+	const { todos, handleSubmit, handleCompletition, handleDelete } = useTodos();
 
 	return (
 		<div className="w-full min-h-screen flex items-center flex-col bg-todos-bg">
 			<div className="w-10/12 max-w-3xl">
 				<div className="w-full mt-28 border-2 border-white">
-					<form className=" px-16 py-8" onSubmit={handleSubmit}>
+					<form
+						className=" px-16 py-8"
+						onSubmit={(e) => handleSubmit(e, todoRef.current.value)}
+					>
 						<h1 className="font-title text-6xl font-bold text-white mb-8 text-center">
 							TO DO LIST
 						</h1>
@@ -120,9 +40,12 @@ export const Todos = () => {
 				</div>
 				<div>
 					{todos &&
-						todos.map((todo) => {
+						todos.map((todo, index) => {
 							return (
-								<div className="bg-white font-mono flex items-center w-full px-3 py-2 my-4 border rounded">
+								<div
+									key={index}
+									className="bg-white font-mono flex items-center w-full px-3 py-2 my-4 border rounded"
+								>
 									{todo.isCompleted === false ? (
 										<FaRegCircle
 											className="text-3xl text-green-800 cursor-pointer hover:opacity-80"
