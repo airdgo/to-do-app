@@ -85,11 +85,22 @@ export const TodosProvider = ({ children }) => {
 		}
 	}
 
+	async function clearList(e) {
+		e.preventDefault();
+		setTodos("");
+		try {
+			await setDoc(userDoc, {});
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+	}
+
 	const value = {
 		todos,
 		handleSubmit,
 		handleCompletition,
 		handleDelete,
+		clearList,
 	};
 
 	return (

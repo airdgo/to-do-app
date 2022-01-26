@@ -4,7 +4,8 @@ import { useTodos } from "../../context/TodosProvider";
 
 export const Todos = () => {
 	const todoRef = useRef();
-	const { todos, handleSubmit, handleCompletition, handleDelete } = useTodos();
+	const { todos, handleSubmit, handleCompletition, handleDelete, clearList } =
+		useTodos();
 
 	return (
 		<div className="w-full min-h-screen flex items-center flex-col bg-todos-bg">
@@ -31,7 +32,10 @@ export const Todos = () => {
 								>
 									Add Note
 								</button>
-								<button className="bg-white text-[#aa3333] font-button px-2 py-1 w-24 whitespace-nowrap">
+								<button
+									className="bg-white text-[#aa3333] font-button px-2 py-1 w-24 whitespace-nowrap"
+									onClick={(e) => clearList(e)}
+								>
 									Clear List
 								</button>
 							</div>
