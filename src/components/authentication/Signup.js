@@ -40,65 +40,75 @@ export const Signup = () => {
 	}
 
 	return (
-		<div className="w-full h-screen grid place-items-center">
+		<div className="grid place-items-center font-card w-full h-screen">
 			<form
-				className="max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+				className="grid place-items-center w-11/12 max-w-sm bg-white shadow-3xl rounded-md px-8 pt-6 pb-8"
 				onSubmit={handleSubmit}
 			>
-				<h1 className="text-center font-bold text-xl mb-3">Sign Up</h1>
-				<div className="mb-4">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Email
-					</label>
+				<h1 className="text-4xl">LOGO</h1>
+				<p className="text-primary font-medium text-md my-7">
+					Sign up for a free account
+				</p>
+
+				<div className="grid grid-cols-2 gap-3">
 					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+						className="text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
 						type="text"
-						placeholder="Email"
+						placeholder="First name"
+						required
+					/>
+					<input
+						className="text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
+						type="text"
+						placeholder="Last name"
+						required
+					/>
+					<input
+						className="col-span-2  text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
+						type="text"
+						placeholder="Email address"
 						required
 						ref={emailRef}
 					/>
-				</div>
-				<div>
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Password
-					</label>
 					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+						className="col-span-2  text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
 						type="password"
-						placeholder="**********"
+						placeholder="Create password"
 						required
 						ref={passwordRef}
 					/>
-				</div>
-				<div className="mb-6">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Confirm Password
-					</label>
 					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+						className="col-span-2  text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
 						type="password"
-						placeholder="**********"
+						placeholder="Confirm password"
 						required
 						ref={passwordConfirmRef}
 					/>
-					{error && <p className="text-red-500 text-xs italic">{error}</p>}
-				</div>
 
-				<div className="flex items-center justify-between">
+					{error && <p className="text-red-500 text-xs italic">{error}</p>}
+
 					<button
-						className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+						className="bg-primary text-white font-light col-span-2 justify-self-center w-48 py-1 px-4 my-10 rounded-md cursor-pointer focus:outline-none focus:shadow-outline"
 						type="submit"
 						disabled={loading}
 					>
-						Sign Up
+						Register
 					</button>
 				</div>
-				<div className="mt-5">
-					Already have an account?{" "}
-					<Link to="/login" className=" text-violet-400 underline">
-						Log In!
+
+				<p className="font-light text-xs">
+					Already a member?
+					<Link
+						to="/login"
+						className="text-primary font-medium ml-1 cursor-pointer"
+					>
+						Sign In!
 					</Link>
-				</div>
+				</p>
+
+				<p className="text-primary font-light text-xs mt-20">
+					by creating an account you will receive 10 crypto
+				</p>
 			</form>
 		</div>
 	);
