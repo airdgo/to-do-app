@@ -2,18 +2,66 @@ import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
-import { AiFillExclamationCircle as ErrorIco } from "react-icons/ai";
+import { FormInput } from "./FormInput";
 
 export const Signup = () => {
-	const firstNameRef = useRef("");
-	const lastNameRef = useRef("");
-	const emailRef = useRef("");
-	const passwordRef = useRef("");
+	const [formValues, setFormValues] = useState({
+		firstName: "",
+		lastName: "",
+		email: "",
+		password: "",
+	});
 	const passwordConfirmRef = useRef("");
 	const { signup } = useAuth();
 	const [error, setError] = useState({});
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
+
+	const formInputs = [
+		{
+			id: 1,
+			name: "firstName",
+			placeholder: "First name",
+			type: "text",
+			position: "self-end",
+			error: "Please provide a valid name",
+			pattern: "[A-Za-z]{3,16}",
+			required: true,
+		},
+		{
+			id: 2,
+			name: "lastName",
+			placeholder: "Last name",
+			type: "text",
+			position: "self-end",
+			error: "Please provide a valid name",
+			pattern: "[A-Za-z]{3,16}",
+			required: true,
+		},
+		{
+			id: 3,
+			name: "email",
+			placeholder: "Email adress",
+			type: "email",
+			position: "col-span-2",
+			error: "Please provide a valid Email address",
+			required: true,
+		},
+		{
+			id: 4,
+			name: "password",
+			placeholder: "Password",
+			type: "password",
+			position: "col-span-2",
+			error: "Please provide a strong password",
+			pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$",
+			required: true,
+		},
+	];
+
+	function onChange(e) {
+		setFormValues({ ...formValues, [e.target.name]: e.target.value });
+	}
 
 	async function handleSubmit(e) {
 		e.preventDefault();
@@ -32,34 +80,34 @@ export const Signup = () => {
 			);
 		}
 
-		if (!nameIsValid(firstNameRef.current.value)) {
-			return setError({ firstName: "Please provide a valid name" });
-		}
+		// if (!nameIsValid(firstNameRef.current.value)) {
+		// 	return setError({ firstName: "Please provide a valid name" });
+		// }
 
-		if (!nameIsValid(lastNameRef.current.value)) {
-			return setError({ lastName: "Please provide a valid name" });
-		}
+		// if (!nameIsValid(lastNameRef.current.value)) {
+		// 	return setError({ lastName: "Please provide a valid name" });
+		// }
 
-		if (!emailIsValid(emailRef.current.value)) {
-			return setError({ email: "Please provide a valid Email address" });
-		}
+		// if (!emailIsValid(emailRef.current.value)) {
+		// 	return setError({ email: "Please provide a valid Email address" });
+		// }
 
-		if (!strongPassword(passwordRef.current.value)) {
-			return setError({ password: "Please provide a strong password" });
-		}
+		// if (!strongPassword(passwordRef.current.value)) {
+		// 	return setError({ password: "Please provide a strong password" });
+		// }
 
-		if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-			return setError({ password: "Passwords do not match" });
-		}
+		// if (passwordRef.current.value !== passwordConfirmRef.current.value) {
+		// 	return setError({ password: "Passwords do not match" });
+		// }
 
-		try {
-			setLoading(true);
-			setError("");
-			await signup(emailRef.current.value, passwordRef.current.value);
-			navigate("/");
-		} catch {
-			setError({ failed: "Failed to sign up" });
-		}
+		// try {
+		// 	setLoading(true);
+		// 	setError("");
+		// 	await signup(emailRef.current.value, passwordRef.current.value);
+		// 	navigate("/");
+		// } catch {
+		// 	setError({ failed: "Failed to sign up" });
+		// }
 
 		setLoading(false);
 	}
@@ -76,82 +124,17 @@ export const Signup = () => {
 				</p>
 
 				<div className="grid grid-cols-2 gap-3">
-					<div className="self-end relative">
-						{error.firstName && (
-							<>
-								<div className="text-red-400 text-[0.6rem] italic font-light mb-2">
-									{error.firstName}
-								</div>
-								<ErrorIco className="absolute right-1 bottom-2 text-red-400" />
-							</>
-						)}
-						<input
-							className={`text-sm font-[200] bg-neutral text-gray-500 placeholder-[#c4c4c4] leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline ${
-								error.firstName && "border border-red-400"
-							}`}
-							type="text"
-							placeholder="First name"
-							required
-							ref={firstNameRef}
-						/>
-					</div>
-					<div className="self-end relative">
-						{error.lastName && (
-							<>
-								<div className="text-red-400 text-[0.6rem] italic font-light mb-2">
-									{error.lastName}
-								</div>
-								<ErrorIco className="absolute right-1 bottom-2 text-red-400" />
-							</>
-						)}
-						<input
-							className={`text-sm font-[200] bg-neutral text-gray-500 placeholder-[#c4c4c4] leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline ${
-								error.lastName && "border border-red-400"
-							}`}
-							type="text"
-							placeholder="Last name"
-							required
-							ref={lastNameRef}
-						/>
-					</div>
-					<div className="col-span-2 relative">
-						{error.email && (
-							<>
-								<div className="text-red-400 text-[0.6rem] italic font-light mb-2">
-									{error.email}
-								</div>
-								<ErrorIco className="absolute right-1 bottom-2 text-red-400" />
-							</>
-						)}
-						<input
-							className={`text-sm font-[200] bg-neutral text-gray-500 placeholder-[#c4c4c4] leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline lg:my-2 ${
-								error.email && "border border-red-400"
-							}`}
-							type="text"
-							placeholder="Email address"
-							required
-							ref={emailRef}
-						/>
-					</div>
-					<div className="col-span-2 relative">
-						{error.password && (
-							<>
-								<div className="text-red-400 text-[0.6rem] italic font-light mb-2">
-									{error.password}
-								</div>
-								<ErrorIco className="absolute right-1 bottom-2 text-red-400" />
-							</>
-						)}
-						<input
-							className={`text-sm font-[200] bg-neutral text-gray-500 placeholder-[#c4c4c4] leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline ${
-								error.password && "border border-red-400"
-							}`}
-							type="password"
-							placeholder="Create password"
-							required
-							ref={passwordRef}
-						/>
-					</div>
+					{formInputs.map((input) => {
+						return (
+							<FormInput
+								key={input.id}
+								{...input}
+								value={formValues[input.name]}
+								onChange={onChange}
+							/>
+						);
+					})}
+
 					{/* <input
 						className="col-span-2  text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
 						type="password"
