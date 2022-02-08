@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import { FormInput } from "./FormInput";
+import { useForm } from "react-hook-form";
 
 export const Signup = () => {
 	const [formValues, setFormValues] = useState({
@@ -11,9 +12,13 @@ export const Signup = () => {
 		email: "",
 		password: "",
 	});
-	const passwordConfirmRef = useRef("");
+	const {
+		register,
+		handleSubmit,
+		trigger,
+		formState: { errors },
+	} = useForm();
 	const { signup } = useAuth();
-	const [error, setError] = useState({});
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
@@ -23,9 +28,9 @@ export const Signup = () => {
 			name: "firstName",
 			placeholder: "First name",
 			type: "text",
-			position: "self-end",
+			position: "",
 			error: "Please provide a valid name",
-			pattern: "[A-Za-z]{3,16}",
+			pattern: /[A-Za-z]{3,16}/,
 			required: true,
 		},
 		{
@@ -33,9 +38,9 @@ export const Signup = () => {
 			name: "lastName",
 			placeholder: "Last name",
 			type: "text",
-			position: "self-end",
+			position: "",
 			error: "Please provide a valid name",
-			pattern: "[A-Za-z]{3,16}",
+			pattern: /[A-Za-z]{3,16}/,
 			required: true,
 		},
 		{
@@ -45,6 +50,7 @@ export const Signup = () => {
 			type: "email",
 			position: "col-span-2",
 			error: "Please provide a valid Email address",
+			pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 			required: true,
 		},
 		{
@@ -54,7 +60,7 @@ export const Signup = () => {
 			type: "password",
 			position: "col-span-2",
 			error: "Please provide a strong password",
-			pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$",
+			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
 			required: true,
 		},
 	];
@@ -63,87 +69,74 @@ export const Signup = () => {
 		setFormValues({ ...formValues, [e.target.name]: e.target.value });
 	}
 
-	async function handleSubmit(e) {
-		e.preventDefault();
+	// async function handleSubmit(e) {
+	// 	e.preventDefault();
 
-		function nameIsValid(name) {
-			return /^[a-zA-Z]+$/.test(name);
-		}
+	// 	// try {
+	// 	// 	setLoading(true);
+	// 	// 	setError("");
+	// 	// 	await signup(emailRef.current.value, passwordRef.current.value);
+	// 	// 	navigate("/");
+	// 	// } catch {
+	// 	// 	setError({ failed: "Failed to sign up" });
+	// 	// }
 
-		function emailIsValid(email) {
-			return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-		}
+	// 	setLoading(false);
+	// }
 
-		function strongPassword(password) {
-			return /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})/.test(
-				password
-			);
-		}
-
-		// if (!nameIsValid(firstNameRef.current.value)) {
-		// 	return setError({ firstName: "Please provide a valid name" });
-		// }
-
-		// if (!nameIsValid(lastNameRef.current.value)) {
-		// 	return setError({ lastName: "Please provide a valid name" });
-		// }
-
-		// if (!emailIsValid(emailRef.current.value)) {
-		// 	return setError({ email: "Please provide a valid Email address" });
-		// }
-
-		// if (!strongPassword(passwordRef.current.value)) {
-		// 	return setError({ password: "Please provide a strong password" });
-		// }
-
-		// if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-		// 	return setError({ password: "Passwords do not match" });
-		// }
-
-		// try {
-		// 	setLoading(true);
-		// 	setError("");
-		// 	await signup(emailRef.current.value, passwordRef.current.value);
-		// 	navigate("/");
-		// } catch {
-		// 	setError({ failed: "Failed to sign up" });
-		// }
-
-		setLoading(false);
-	}
+	const onSubmit = (data) => console.log(data);
+	console.log(errors);
 
 	return (
-		<div className="grid place-items-center font-card bg-background w-full h-screen lg:justify-items-end">
+		<div className="grid h-screen w-full place-items-center bg-background font-card lg:justify-items-end">
 			<form
-				className="grid place-items-center w-11/12 max-w-sm bg-white shadow-md rounded-md px-8 py-6 lg:mr-28 lg:py-10"
-				onSubmit={handleSubmit}
+				className="grid w-11/12 max-w-sm place-items-center rounded-md bg-white px-8 py-6 shadow-md lg:mr-28 lg:py-10"
+				onSubmit={handleSubmit(onSubmit)}
 			>
 				<h1 className="text-4xl">LOGO</h1>
-				<p className="text-primary font-medium text-md my-7 lg:text-xl lg:my-12">
+				<p className="text-md my-7 font-medium text-primary lg:my-12 lg:text-xl">
 					Sign up for a free account
 				</p>
 
 				<div className="grid grid-cols-2 gap-3">
-					{formInputs.map((input) => {
+					{/* {formInputs.map((input) => {
 						return (
 							<FormInput
 								key={input.id}
 								{...input}
+
 								value={formValues[input.name]}
 								onChange={onChange}
 							/>
 						);
+					})} */}
+
+					{formInputs.map((input) => {
+						return (
+							<div className={`${input.position} relative`}>
+								<input
+									className="peer focus:shadow-outline w-full appearance-none rounded bg-neutral py-1 px-3 text-sm font-[200] leading-tight text-gray-500 placeholder-[#c4c4c4] focus:outline-none"
+									placeholder={input.placeholder}
+									{...register(input.name, {
+										required: input.required,
+										pattern: { value: input.pattern, message: input.error },
+									})}
+									onKeyUp={() => trigger(input.name)}
+								/>
+								{errors[input.name] && (
+									<div className="" id="error">
+										<div className="text-[0.6rem] font-light italic text-red-400">
+											{errors[input.name].message}
+										</div>
+										{/* <ErrorIco className="absolute right-1 top-2 text-red-400" /> */}
+									</div>
+								)}
+							</div>
+						);
 					})}
 
-					{/* <input
-						className="col-span-2  text-sm font-[200] bg-neutral text-gray-500 leading-tight appearance-none rounded w-full py-1 px-3 focus:outline-none focus:shadow-outline"
-						type="password"
-						placeholder="Confirm password"
-						required
-						ref={passwordConfirmRef}
-					/> */}
 					<button
-						className="bg-primary text-white font-light col-span-2 justify-self-center w-48 py-1 px-4 my-10 rounded-md cursor-pointer focus:outline-none focus:shadow-outline lg:text-sm lg:mb-4 lg:py-2"
+						className="focus:shadow-outline col-span-2 my-10 w-48 cursor-pointer justify-self-center rounded-md bg-primary py-1 px-4 font-light text-white focus:outline-none lg:mb-4 lg:py-2 lg:text-sm"
 						type="submit"
 						disabled={loading}
 					>
@@ -151,17 +144,17 @@ export const Signup = () => {
 					</button>
 				</div>
 
-				<p className="font-light text-xs">
+				<p className="text-xs font-light">
 					Already a member?
 					<Link
 						to="/login"
-						className="text-primary font-medium ml-1 cursor-pointer"
+						className="ml-1 cursor-pointer font-medium text-primary"
 					>
 						Sign In!
 					</Link>
 				</p>
 
-				<p className="text-primary font-light text-xs mt-20 lg:mt-12">
+				<p className="mt-20 text-xs font-light text-primary lg:mt-12">
 					by creating an account you will receive 10 crypto
 				</p>
 			</form>
