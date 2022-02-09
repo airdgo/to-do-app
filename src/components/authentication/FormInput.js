@@ -4,15 +4,8 @@ import {
 } from "react-icons/ai";
 
 export const FormInput = (props) => {
-	const {
-		pattern,
-		position,
-		register,
-		trigger,
-		errors,
-		errorMessage,
-		...inputProps
-	} = props;
+	const { register, trigger, errors, pattern, errorMessage, ...inputProps } =
+		props;
 
 	return (
 		<div className={`${props.position} relative`}>
@@ -30,19 +23,29 @@ export const FormInput = (props) => {
 						message: errorMessage,
 					},
 				})}
-				onKeyUp={() => trigger(props.name)}
+				onKeyUp={async () => await trigger(props.name)}
 			/>
+
+			<Validation props={errors[props.name]} />
+		</div>
+	);
+};
+
+const Validation = ({ props }) => {
+	return (
+		<>
 			<div className="hidden peer-valid:block">
 				<ValidIco className="absolute right-1 top-2 text-green-400" />
 			</div>
-			{errors[props.name] && (
-				<div className="">
+
+			{props && (
+				<div className="mt-1">
 					<div className="text-[0.6rem] font-light italic text-red-400">
-						{errors[props.name].message}
+						{props.message}
 					</div>
 					<InvalidIco className="absolute right-1 top-2 text-red-400" />
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
