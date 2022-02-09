@@ -6,12 +6,6 @@ import { FormInput } from "./FormInput";
 import { useForm } from "react-hook-form";
 
 export const Signup = () => {
-	const [formValues, setFormValues] = useState({
-		firstName: "",
-		lastName: "",
-		email: "",
-		password: "",
-	});
 	const {
 		register,
 		handleSubmit,
@@ -29,9 +23,9 @@ export const Signup = () => {
 			placeholder: "First name",
 			type: "text",
 			position: "",
-			error: "Please provide a valid name",
+			errorMessage: "Please provide a valid name",
 			pattern: /[A-Za-z]{3,16}/,
-			required: true,
+			required: "Please provide a valid name",
 		},
 		{
 			id: 2,
@@ -39,9 +33,9 @@ export const Signup = () => {
 			placeholder: "Last name",
 			type: "text",
 			position: "",
-			error: "Please provide a valid name",
+			errorMessage: "Please provide a valid name",
 			pattern: /[A-Za-z]{3,16}/,
-			required: true,
+			required: "Please provide a valid name",
 		},
 		{
 			id: 3,
@@ -49,9 +43,10 @@ export const Signup = () => {
 			placeholder: "Email adress",
 			type: "email",
 			position: "col-span-2",
-			error: "Please provide a valid Email address",
-			pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-			required: true,
+			errorMessage: "Please provide a valid Email address",
+			pattern:
+				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+			required: "Please provide a valid Email address",
 		},
 		{
 			id: 4,
@@ -59,15 +54,11 @@ export const Signup = () => {
 			placeholder: "Password",
 			type: "password",
 			position: "col-span-2",
-			error: "Please provide a strong password",
+			errorMessage: "Please provide a strong password",
 			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
-			required: true,
+			required: "Please provide a strong password",
 		},
 	];
-
-	function onChange(e) {
-		setFormValues({ ...formValues, [e.target.name]: e.target.value });
-	}
 
 	// async function handleSubmit(e) {
 	// 	e.preventDefault();
@@ -99,39 +90,15 @@ export const Signup = () => {
 				</p>
 
 				<div className="grid grid-cols-2 gap-3">
-					{/* {formInputs.map((input) => {
+					{formInputs.map((input) => {
 						return (
 							<FormInput
 								key={input.id}
 								{...input}
-
-								value={formValues[input.name]}
-								onChange={onChange}
+								register={register}
+								errors={errors}
+								trigger={trigger}
 							/>
-						);
-					})} */}
-
-					{formInputs.map((input) => {
-						return (
-							<div className={`${input.position} relative`}>
-								<input
-									className="peer focus:shadow-outline w-full appearance-none rounded bg-neutral py-1 px-3 text-sm font-[200] leading-tight text-gray-500 placeholder-[#c4c4c4] focus:outline-none"
-									placeholder={input.placeholder}
-									{...register(input.name, {
-										required: input.required,
-										pattern: { value: input.pattern, message: input.error },
-									})}
-									onKeyUp={() => trigger(input.name)}
-								/>
-								{errors[input.name] && (
-									<div className="" id="error">
-										<div className="text-[0.6rem] font-light italic text-red-400">
-											{errors[input.name].message}
-										</div>
-										{/* <ErrorIco className="absolute right-1 top-2 text-red-400" /> */}
-									</div>
-								)}
-							</div>
 						);
 					})}
 
