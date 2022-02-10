@@ -1,10 +1,13 @@
-import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import { FormInput } from "./FormInput";
 import { useForm } from "react-hook-form";
 import { Form } from "./Form";
+import { PrimaryButton } from "./PrimaryButton";
+import { FormHeader } from "./FormHeader";
+import { AuthFooter } from "./AuthFooter";
+import { FormContainer } from "./FormContainer";
 
 export const Signup = () => {
 	const {
@@ -19,7 +22,6 @@ export const Signup = () => {
 
 	const formInputs = [
 		{
-			id: 1,
 			name: "firstName",
 			placeholder: "First name",
 			type: "text",
@@ -29,7 +31,6 @@ export const Signup = () => {
 			required: "Please provide a name",
 		},
 		{
-			id: 2,
 			name: "lastName",
 			placeholder: "Last name",
 			type: "text",
@@ -39,7 +40,6 @@ export const Signup = () => {
 			required: "Please provide a name",
 		},
 		{
-			id: 3,
 			name: "email",
 			placeholder: "Email adress",
 			type: "email",
@@ -50,7 +50,6 @@ export const Signup = () => {
 			required: "Please provide an Email address",
 		},
 		{
-			id: 4,
 			name: "password",
 			placeholder: "Password",
 			type: "password",
@@ -62,35 +61,31 @@ export const Signup = () => {
 		},
 	];
 
-	function onSubmit(data) {
+	async function onSubmit(data) {
 		console.log(data);
 
-		// 	// try {
-		// 	// 	setLoading(true);
-		// 	// 	setError("");
-		// 	// 	await signup(data.email, data.password);
-		// 	// 	navigate("/");
-		// 	// } catch {
-		// 	// 	setError({ failed: "Failed to sign up" });
-		// 	// }
+		try {
+			setLoading(true);
+			await signup(data.email, data.password);
+			navigate("/");
+		} catch (error) {
+			console.log(error.message);
+		}
 
 		setLoading(false);
 	}
 
 	return (
 		<div className="min-h-screen bg-background font-card">
-			<div className="grid min-h-[95vh] w-full place-items-center lg:justify-items-end">
+			<FormContainer>
 				<Form onSubmit={handleSubmit(onSubmit)}>
-					<h1 className="text-4xl">LOGO</h1>
-					<p className="text-md my-7 font-medium text-primary lg:my-12 lg:text-xl">
-						Sign up for a free account
-					</p>
+					<FormHeader>Sign up for a free account</FormHeader>
 
 					<div className="grid grid-cols-2 gap-3">
-						{formInputs.map((input) => {
+						{formInputs.map((input, index) => {
 							return (
 								<FormInput
-									key={input.id}
+									key={index}
 									{...input}
 									register={register}
 									trigger={trigger}
@@ -99,13 +94,7 @@ export const Signup = () => {
 							);
 						})}
 
-						<button
-							className="focus:shadow-outline col-span-2 my-10 w-48 cursor-pointer justify-self-center rounded-md bg-primary py-1 px-4 font-light text-white focus:outline-none lg:mb-4 lg:py-2 lg:text-sm"
-							type="submit"
-							disabled={loading}
-						>
-							Register
-						</button>
+						<PrimaryButton disabled={loading}>Register</PrimaryButton>
 					</div>
 
 					<p className="text-xs font-light">
@@ -122,13 +111,8 @@ export const Signup = () => {
 						by creating an account you will receive 10 crypto
 					</p>
 				</Form>
-			</div>
-			<footer className="w-full">
-				<div className="font flex h-full w-full justify-around text-xs lg:text-sm">
-					<div>Copywright @ TruYou 2021</div>
-					<div>www.truyou.com</div>
-				</div>
-			</footer>
+			</FormContainer>
+			<AuthFooter />
 		</div>
 	);
 };

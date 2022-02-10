@@ -1,92 +1,95 @@
-import { useRef } from "react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import { FormInput } from "./FormInput";
+import { useForm } from "react-hook-form";
+import { Form } from "./Form";
+import { PrimaryButton } from "./PrimaryButton";
+import { FormHeader } from "./FormHeader";
+import { AuthFooter } from "./AuthFooter";
+import { FormContainer } from "./FormContainer";
 
 export const Login = () => {
-	const emailRef = useRef("");
-	const passwordRef = useRef("");
+	const {
+		handleSubmit,
+		register,
+		trigger,
+		formState: { errors },
+	} = useForm();
 	const { login } = useAuth();
-	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
-	async function handleSubmit(e) {
-		e.preventDefault();
+	const formInputs = [
+		{
+			name: "email",
+			placeholder: "Email adress",
+			type: "email",
+			position: "col-span-2",
+			errorMessage: "Please provide a valid Email address",
+			pattern:
+				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+			required: "Please provide an Email address",
+		},
+		{
+			name: "password",
+			placeholder: "Password",
+			type: "password",
+			position: "col-span-2",
+			errorMessage:
+				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
+			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
+			required: "Please provide a strong password",
+		},
+	];
 
-		function emailIsValid(email) {
-			return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-		}
+	async function onSubmit(data) {
+		console.log(data);
 
-		if (!emailIsValid(emailRef.current.value)) {
-			return setError("Invalid email");
-		}
-
-		try {
-			setLoading(true);
-			setError("");
-			await login(emailRef.current.value, passwordRef.current.value);
-			navigate("/");
-		} catch {
-			setError("Failed to log in");
-		}
+		// try {
+		// 	setLoading(true);
+		// 	await login(data.email, data.password);
+		// 	navigate("/");
+		// } catch (error) {
+		// 	console.log(error.message);
+		// }
 
 		setLoading(false);
 	}
 
 	return (
-		<div className="w-full h-screen flex justify-center items-center flex-col">
-			<form
-				className="max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-				onSubmit={handleSubmit}
-			>
-				<h1 className="text-center font-bold text-xl mb-3">Log In</h1>
-				<div className="mb-4">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Email
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						type="text"
-						placeholder="Email"
-						required
-						ref={emailRef}
-					/>
-				</div>
-				<div className="mb-5">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Password
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-						type="password"
-						placeholder="**********"
-						required
-						ref={passwordRef}
-					/>
-					{error && <p className="text-red-500 text-xs italic">{error}</p>}
-				</div>
-				<div className="flex items-center justify-between">
-					<button
-						className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-						type="submit"
-						disabled={loading}
-					>
-						Log In
-					</button>
-				</div>
-				<div className="mt-5 text-center">
-					<Link to="/forgot-password" className=" text-violet-400 underline ">
-						Forgot password?
-					</Link>
-				</div>
-			</form>
-			<div>
-				Don't have an account?{" "}
-				<Link to="/signup" className=" text-violet-400 underline">
-					Sign Up!
-				</Link>
-			</div>
+		<div className="min-h-screen bg-background font-card">
+			<FormContainer>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<FormHeader>Autentification</FormHeader>
+
+					<div className="grid grid-cols-2 gap-3">
+						{formInputs.map((input, index) => {
+							return (
+								<FormInput
+									key={index}
+									{...input}
+									register={register}
+									trigger={trigger}
+									errors={errors}
+								/>
+							);
+						})}
+
+						<PrimaryButton disabled={loading}>Login</PrimaryButton>
+					</div>
+
+					<p className="mb-28 text-xs font-light">
+						<Link
+							to="/forgot-password"
+							className="cursor-pointer font-medium text-primary"
+						>
+							Forgot password?
+						</Link>
+					</p>
+				</Form>
+			</FormContainer>
+			<AuthFooter />
 		</div>
 	);
 };
