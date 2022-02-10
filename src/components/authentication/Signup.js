@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
 import { FormInput } from "./FormInput";
 import { useForm } from "react-hook-form";
+import { Form } from "./Form";
 
 export const Signup = () => {
 	const {
@@ -79,10 +80,7 @@ export const Signup = () => {
 	return (
 		<div className="min-h-screen bg-background font-card">
 			<div className="grid min-h-[95vh] w-full place-items-center lg:justify-items-end">
-				<form
-					className="grid w-11/12 max-w-sm place-items-center rounded-md bg-white px-8 py-6 shadow-md lg:mr-28 lg:py-10"
-					onSubmit={handleSubmit(onSubmit)}
-				>
+				<Form onSubmit={handleSubmit(onSubmit)}>
 					<h1 className="text-4xl">LOGO</h1>
 					<p className="text-md my-7 font-medium text-primary lg:my-12 lg:text-xl">
 						Sign up for a free account
@@ -123,7 +121,7 @@ export const Signup = () => {
 					<p className="mt-20 text-xs font-light text-primary lg:mt-12">
 						by creating an account you will receive 10 crypto
 					</p>
-				</form>
+				</Form>
 			</div>
 			<footer className="w-full">
 				<div className="font flex h-full w-full justify-around text-xs lg:text-sm">
