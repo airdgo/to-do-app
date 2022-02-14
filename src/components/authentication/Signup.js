@@ -55,23 +55,17 @@ export const Signup = () => {
 
 	const formSchema = Yup.object().shape({
 		firstName: Yup.string()
-			.matches(/^[A-Za-z]{2,16}$/, "Please provide a valid name")
-			.required("Please provide a name"),
+			.matches(formInputs[0].pattern, formInputs[0].errorMessage)
+			.required(formInputs[0].required),
 		lastName: Yup.string()
-			.matches(/^[A-Za-z]{2,16}$/, "Please provide a valid name")
-			.required("Please provide a name"),
+			.matches(formInputs[1].pattern, formInputs[1].errorMessage)
+			.required(formInputs[1].required),
 		email: Yup.string()
-			.matches(
-				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
-				"Please provide a valid Email address"
-			)
-			.required("Please provide an Email address"),
+			.matches(formInputs[2].pattern, formInputs[2].errorMessage)
+			.required(formInputs[2].required),
 		password: Yup.string()
-			.matches(
-				/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
-				"The password must contain 8 or more characters with a mix of letters, numbers & symbols"
-			)
-			.required("Please provide a strong password"),
+			.matches(formInputs[3].pattern, formInputs[3].errorMessage)
+			.required(formInputs[3].required),
 	});
 
 	const {

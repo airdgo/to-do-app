@@ -8,22 +8,10 @@ import { PrimaryButton } from "./PrimaryButton";
 import { FormHeader } from "./FormHeader";
 import { AuthFooter } from "./AuthFooter";
 import { FormContainer } from "./FormContainer";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
-let renderCount = 0;
 export const ForgotPassword = () => {
-	renderCount++;
-	console.log(renderCount);
-	const {
-		handleSubmit,
-		register,
-		trigger,
-		watch,
-		formState: { errors },
-	} = useForm({ defaultValues: { newPassword: "" } });
-	const { resetPassword } = useAuth();
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
-
 	const formInputs = [
 		{
 			name: "newPassword",
@@ -32,8 +20,7 @@ export const ForgotPassword = () => {
 			position: "col-span-2",
 			errorMessage:
 				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
-			pattern:
-				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
 			required: "Please provide a valid password",
 		},
 		{
@@ -42,10 +29,29 @@ export const ForgotPassword = () => {
 			type: "password",
 			position: "col-span-2",
 			errorMessage: "Passwords do not match",
-			pattern: "asd",
+			pattern: "",
 			required: "Please enter a valid password",
 		},
 	];
+
+	const formSchema = Yup.object().shape({
+		newPassword: Yup.string()
+			.matches(formInputs[0].pattern, formInputs[0].errorMessage)
+			.required(formInputs[0].required),
+		confirmPassword: Yup.string()
+			.required(formInputs[1].required)
+			.oneOf([Yup.ref("newPassword")], "Passwords must and should match"),
+	});
+
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
+
+	const { resetPassword } = useAuth();
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
 
 	async function onSubmit(data) {
 		console.log(data);
@@ -72,25 +78,16 @@ export const ForgotPassword = () => {
 							return (
 								<FormInput
 									key={index}
-									{...input}
 									register={register}
-									trigger={trigger}
-									errors={errors}
+									{...input}
+									error={!!errors[input.name]}
+									helperText={errors[input.name]?.message}
 								/>
 							);
 						})}
 
 						<PrimaryButton disabled={loading}>Create</PrimaryButton>
 					</div>
-
-					<p className="mb-28 text-xs font-light">
-						<Link
-							to="/forgot-password"
-							className="cursor-pointer font-medium text-primary"
-						>
-							Forgot password?
-						</Link>
-					</p>
 				</Form>
 			</FormContainer>
 			<AuthFooter />

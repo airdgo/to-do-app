@@ -8,18 +8,10 @@ import { PrimaryButton } from "./PrimaryButton";
 import { FormHeader } from "./FormHeader";
 import { AuthFooter } from "./AuthFooter";
 import { FormContainer } from "./FormContainer";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 export const Login = () => {
-	const {
-		handleSubmit,
-		register,
-		trigger,
-		formState: { errors },
-	} = useForm();
-	const { login } = useAuth();
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
-
 	const formInputs = [
 		{
 			name: "email",
@@ -41,6 +33,24 @@ export const Login = () => {
 			required: "Please enter a valid password",
 		},
 	];
+
+	const formSchema = Yup.object().shape({
+		email: Yup.string()
+			.matches(formInputs[0].pattern, formInputs[0].errorMessage)
+			.required(formInputs[0].required),
+		password: Yup.string()
+			.matches(formInputs[1].pattern, formInputs[1].errorMessage)
+			.required(formInputs[1].required),
+	});
+
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
+	const { login } = useAuth();
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
 
 	async function onSubmit(data) {
 		console.log(data);
@@ -67,10 +77,10 @@ export const Login = () => {
 							return (
 								<FormInput
 									key={index}
-									{...input}
 									register={register}
-									trigger={trigger}
-									errors={errors}
+									{...input}
+									error={!!errors[input.name]}
+									helperText={errors[input.name]?.message}
 								/>
 							);
 						})}
