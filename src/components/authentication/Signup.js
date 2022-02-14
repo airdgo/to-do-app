@@ -81,7 +81,7 @@ export const Signup = () => {
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<FormHeader>Sign up for a free account</FormHeader>
 
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid w-full grid-cols-2 gap-3">
 						{formInputs.map((input, index) => {
 							return (
 								<FormInput

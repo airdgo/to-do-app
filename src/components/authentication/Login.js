@@ -36,10 +36,9 @@ export const Login = () => {
 			placeholder: "Password",
 			type: "password",
 			position: "col-span-2",
-			errorMessage:
-				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
+			errorMessage: "Please enter a valid password",
 			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
-			required: "Please provide a strong password",
+			required: "Please enter a valid password",
 		},
 	];
 
@@ -63,7 +62,7 @@ export const Login = () => {
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<FormHeader>Autentification</FormHeader>
 
-					<div className="grid grid-cols-2 gap-3">
+					<div className="grid w-full grid-cols-2 gap-3">
 						{formInputs.map((input, index) => {
 							return (
 								<FormInput
