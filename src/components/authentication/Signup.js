@@ -8,18 +8,10 @@ import { PrimaryButton } from "./PrimaryButton";
 import { FormHeader } from "./FormHeader";
 import { AuthFooter } from "./AuthFooter";
 import { FormContainer } from "./FormContainer";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 export const Signup = () => {
-	const {
-		handleSubmit,
-		register,
-		trigger,
-		formState: { errors },
-	} = useForm();
-	const { signup } = useAuth();
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
-
 	const formInputs = [
 		{
 			name: "firstName",
@@ -61,6 +53,36 @@ export const Signup = () => {
 		},
 	];
 
+	const formSchema = Yup.object().shape({
+		firstName: Yup.string()
+			.matches(/^[A-Za-z]{2,16}$/, "Please provide a valid name")
+			.required("Please provide a name"),
+		lastName: Yup.string()
+			.matches(/^[A-Za-z]{2,16}$/, "Please provide a valid name")
+			.required("Please provide a name"),
+		email: Yup.string()
+			.matches(
+				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+				"Please provide a valid Email address"
+			)
+			.required("Please provide an Email address"),
+		password: Yup.string()
+			.matches(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
+				"The password must contain 8 or more characters with a mix of letters, numbers & symbols"
+			)
+			.required("Please provide a strong password"),
+	});
+
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
+	const { signup } = useAuth();
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
+
 	async function onSubmit(data) {
 		console.log(data);
 
@@ -86,10 +108,10 @@ export const Signup = () => {
 							return (
 								<FormInput
 									key={index}
-									{...input}
 									register={register}
-									trigger={trigger}
-									errors={errors}
+									{...input}
+									error={!!errors[input.name]}
+									helperText={errors[input.name]?.message}
 								/>
 							);
 						})}
