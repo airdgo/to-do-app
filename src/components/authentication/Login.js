@@ -72,7 +72,7 @@ export const Login = () => {
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<FormHeader>Autentification</FormHeader>
 
-					<div className="grid w-full grid-cols-2 gap-3">
+					<div className="relative grid w-full grid-cols-2 gap-3">
 						{formInputs.map((input, index) => {
 							return (
 								<FormInput

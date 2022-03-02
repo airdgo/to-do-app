@@ -1,7 +1,7 @@
 import { Signup } from "./components/authentication/Signup";
 import { Profile } from "./components/authentication/Profile";
 import { Login } from "./components/authentication/Login";
-import { ForgotPassword } from "./components/authentication/ForgotPasswordT";
+import { ForgotPassword } from "./components/authentication/ForgotPassword";
 import { AuthProvider } from "./context/AuthProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./components/authentication/PrivateRoute";
