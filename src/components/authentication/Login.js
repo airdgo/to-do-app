@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
-import { FormInput } from "./FormInput";
+import { FormInput } from "./form-components/FormInput";
 import { useForm } from "react-hook-form";
-import { Form } from "./Form";
-import { PrimaryButton } from "./PrimaryButton";
-import { FormHeader } from "./FormHeader";
+import { Form } from "./form-components/Form";
+import { PrimaryButton } from "./form-components/PrimaryButton";
+import { FormHeader } from "./form-components/FormHeader";
 import { AuthFooter } from "./AuthFooter";
-import { FormContainer } from "./FormContainer";
+import { FormContainer } from "./form-components/FormContainer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
