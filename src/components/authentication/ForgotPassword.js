@@ -1,79 +1,106 @@
-import { useRef } from "react";
-import { useState } from "react/cjs/react.development";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthProvider";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FormInput } from "./form-components/FormInput";
+import { useForm } from "react-hook-form";
+import { Form } from "./form-components/Form";
+import { PrimaryButton } from "./form-components/PrimaryButton";
+import { FormHeader } from "./form-components/FormHeader";
+import { AuthFooter } from "./AuthFooter";
+import { FormContainer } from "./form-components/FormContainer";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 export const ForgotPassword = () => {
-	const emailRef = useRef("");
+	const formSchema = Yup.object().shape({
+		newPassword: Yup.string()
+			.matches(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
+				"The password must contain 8 or more characters with a mix of letters, numbers & symbols"
+			)
+			.required("Please provide a valid password"),
+		confirmPassword: Yup.string()
+			.required("Please enter a valid password")
+			.matches(
+				/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
+				"The password must contain 8 or more characters with a mix of letters, numbers & symbols"
+			)
+			.oneOf([Yup.ref("newPassword")], "Passwords do not match"),
+	});
+
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+		watch,
+	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
+
 	const { resetPassword } = useAuth();
-	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [message, setMessage] = useState("");
+	const navigate = useNavigate();
 
-	async function handleSubmit(e) {
-		e.preventDefault();
+	const watchInput = watch("newPassword", "");
 
-		function emailIsValid(email) {
-			return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-		}
+	const formInputs = [
+		{
+			name: "newPassword",
+			placeholder: "New Password",
+			type: "password",
+			position: "col-span-2",
+			errorMessage:
+				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
+			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
+			required: "Please provide a valid password",
+		},
+		{
+			name: "confirmPassword",
+			placeholder: "Password",
+			type: "password",
+			position: "col-span-2",
+			errorMessage: "Passwords do not match",
+			pattern: watchInput,
+			required: "Please enter a valid password",
+		},
+	];
 
-		if (!emailIsValid(emailRef.current.value)) {
-			return setError("Invalid email");
-		}
+	async function onSubmit(data) {
+		console.log(data);
 
-		try {
-			setLoading(true);
-			setError("");
-			await resetPassword(emailRef.current.value);
-			setMessage("Check your inbox for further instructions");
-		} catch {
-			setError("Failed to reset password");
-		}
+		// try {
+		// 	setLoading(true);
+		// 	await login(data.email, data.password);
+		// 	navigate("/");
+		// } catch (error) {
+		// 	console.log(error.message);
+		// }
 
 		setLoading(false);
 	}
 
 	return (
-		<div className="w-full min-h-screen flex justify-center items-center flex-col">
-			<form
-				className="max-w-xs bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-				onSubmit={handleSubmit}
-			>
-				<h1 className="text-center font-bold text-xl mb-3">Reset Password</h1>
-				{message && (
-					<div className=" text-sm bg-green-100 text-green-900 border-green-600 p-4 mb-4 border rounded">
-						{message}
-					</div>
-				)}
+		<div className="min-h-screen bg-background font-card">
+			<FormContainer>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<FormHeader>Create new password</FormHeader>
 
-				<div className="mb-4">
-					<label className="block text-gray-700 text-sm font-bold mb-2">
-						Email
-					</label>
-					<input
-						className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						type="text"
-						placeholder="Email"
-						required
-						ref={emailRef}
-					/>
-					{error && <p className="text-red-500 text-xs italic">{error}</p>}
-				</div>
-				<div className="flex items-center justify-between">
-					<button
-						className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-						type="submit"
-						disabled={loading}
-					>
-						Reset Password
-					</button>
-				</div>
-			</form>
-			<div>
-				<Link to="/login" className=" text-violet-400 underline">
-					Log In!
-				</Link>
-			</div>
+					<div className="grid w-full grid-cols-2 gap-3 pb-32">
+						{formInputs.map((input, index) => {
+							return (
+								<FormInput
+									key={index}
+									register={register}
+									{...input}
+									error={!!errors[input.name]}
+									helperText={errors[input.name]?.message}
+								/>
+							);
+						})}
+
+						<PrimaryButton disabled={loading}>Create</PrimaryButton>
+					</div>
+				</Form>
+			</FormContainer>
+			<AuthFooter />
 		</div>
 	);
 };

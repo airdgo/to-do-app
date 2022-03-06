@@ -1,24 +1,19 @@
-import { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
-import { FormInput } from "./FormInput";
+import { FormInput } from "./form-components/FormInput";
 import { useForm } from "react-hook-form";
+import { Form } from "./form-components/Form";
+import { PrimaryButton } from "./form-components/PrimaryButton";
+import { FormHeader } from "./form-components/FormHeader";
+import { AuthFooter } from "./AuthFooter";
+import { FormContainer } from "./form-components/FormContainer";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
 export const Signup = () => {
-	const {
-		handleSubmit,
-		register,
-		trigger,
-		formState: { errors },
-	} = useForm();
-	const { signup } = useAuth();
-	const [loading, setLoading] = useState(false);
-	const navigate = useNavigate();
-
 	const formInputs = [
 		{
-			id: 1,
 			name: "firstName",
 			placeholder: "First name",
 			type: "text",
@@ -28,7 +23,6 @@ export const Signup = () => {
 			required: "Please provide a name",
 		},
 		{
-			id: 2,
 			name: "lastName",
 			placeholder: "Last name",
 			type: "text",
@@ -38,7 +32,6 @@ export const Signup = () => {
 			required: "Please provide a name",
 		},
 		{
-			id: 3,
 			name: "email",
 			placeholder: "Email adress",
 			type: "email",
@@ -49,7 +42,6 @@ export const Signup = () => {
 			required: "Please provide an Email address",
 		},
 		{
-			id: 4,
 			name: "password",
 			placeholder: "Password",
 			type: "password",
@@ -61,53 +53,64 @@ export const Signup = () => {
 		},
 	];
 
-	function onSubmit(data) {
+	const formSchema = Yup.object().shape({
+		firstName: Yup.string()
+			.matches(formInputs[0].pattern, formInputs[0].errorMessage)
+			.required(formInputs[0].required),
+		lastName: Yup.string()
+			.matches(formInputs[1].pattern, formInputs[1].errorMessage)
+			.required(formInputs[1].required),
+		email: Yup.string()
+			.matches(formInputs[2].pattern, formInputs[2].errorMessage)
+			.required(formInputs[2].required),
+		password: Yup.string()
+			.matches(formInputs[3].pattern, formInputs[3].errorMessage)
+			.required(formInputs[3].required),
+	});
+
+	const {
+		handleSubmit,
+		register,
+		formState: { errors },
+	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
+	const { signup } = useAuth();
+	const [loading, setLoading] = useState(false);
+	const navigate = useNavigate();
+
+	async function onSubmit(data) {
 		console.log(data);
 
-		// 	// try {
-		// 	// 	setLoading(true);
-		// 	// 	setError("");
-		// 	// 	await signup(data.email, data.password);
-		// 	// 	navigate("/");
-		// 	// } catch {
-		// 	// 	setError({ failed: "Failed to sign up" });
-		// 	// }
+		try {
+			setLoading(true);
+			await signup(data.email, data.password);
+			navigate("/");
+		} catch (error) {
+			console.log(error.message);
+		}
 
 		setLoading(false);
 	}
 
 	return (
 		<div className="min-h-screen bg-background font-card">
-			<div className="grid min-h-[95vh] w-full place-items-center lg:justify-items-end">
-				<form
-					className="grid w-11/12 max-w-sm place-items-center rounded-md bg-white px-8 py-6 shadow-md lg:mr-28 lg:py-10"
-					onSubmit={handleSubmit(onSubmit)}
-				>
-					<h1 className="text-4xl">LOGO</h1>
-					<p className="text-md my-7 font-medium text-primary lg:my-12 lg:text-xl">
-						Sign up for a free account
-					</p>
+			<FormContainer>
+				<Form onSubmit={handleSubmit(onSubmit)}>
+					<FormHeader>Sign up for a free account</FormHeader>
 
-					<div className="grid grid-cols-2 gap-3">
-						{formInputs.map((input) => {
+					<div className="grid w-full grid-cols-2 gap-3">
+						{formInputs.map((input, index) => {
 							return (
 								<FormInput
-									key={input.id}
-									{...input}
+									key={index}
 									register={register}
-									trigger={trigger}
-									errors={errors}
+									{...input}
+									error={!!errors[input.name]}
+									helperText={errors[input.name]?.message}
 								/>
 							);
 						})}
 
-						<button
-							className="focus:shadow-outline col-span-2 my-10 w-48 cursor-pointer justify-self-center rounded-md bg-primary py-1 px-4 font-light text-white focus:outline-none lg:mb-4 lg:py-2 lg:text-sm"
-							type="submit"
-							disabled={loading}
-						>
-							Register
-						</button>
+						<PrimaryButton disabled={loading}>Register</PrimaryButton>
 					</div>
 
 					<p className="text-xs font-light">
@@ -123,14 +126,9 @@ export const Signup = () => {
 					<p className="mt-20 text-xs font-light text-primary lg:mt-12">
 						by creating an account you will receive 10 crypto
 					</p>
-				</form>
-			</div>
-			<footer className="w-full">
-				<div className="font flex h-full w-full justify-around text-xs lg:text-sm">
-					<div>Copywright @ TruYou 2021</div>
-					<div>www.truyou.com</div>
-				</div>
-			</footer>
+				</Form>
+			</FormContainer>
+			<AuthFooter />
 		</div>
 	);
 };
