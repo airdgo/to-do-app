@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
 export const Login = () => {
+	const [passwordShown, setPasswordShown] = useState(false);
 	const formInputs = [
 		{
 			name: "email",
@@ -22,15 +23,17 @@ export const Login = () => {
 			pattern:
 				/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
 			required: "Please provide an Email address",
+			passwordButton: false,
 		},
 		{
 			name: "password",
 			placeholder: "Password",
-			type: "password",
+			type: passwordShown ? "text" : "password",
 			position: "col-span-2",
 			errorMessage: "Please enter a valid password",
 			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
 			required: "Please enter a valid password",
+			passwordButton: true,
 		},
 	];
 
@@ -51,6 +54,10 @@ export const Login = () => {
 	const { login } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
+
+	const togglePassword = () => {
+		setPasswordShown(!passwordShown);
+	};
 
 	async function onSubmit(data) {
 		console.log(data);
@@ -81,10 +88,11 @@ export const Login = () => {
 									{...input}
 									error={!!errors[input.name]}
 									helperText={errors[input.name]?.message}
+									showPassword={input.passwordButton}
+									togglePassword={togglePassword}
 								/>
 							);
 						})}
-
 						<PrimaryButton disabled={loading}>Login</PrimaryButton>
 					</div>
 

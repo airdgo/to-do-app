@@ -41,27 +41,34 @@ export const ForgotPassword = () => {
 
 	const watchInput = watch("newPassword", "");
 
+	const [passwordShown, setPasswordShown] = useState(false);
 	const formInputs = [
 		{
 			name: "newPassword",
 			placeholder: "New Password",
-			type: "password",
+			type: passwordShown ? "text" : "password",
 			position: "col-span-2",
 			errorMessage:
 				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
 			pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,30}$/,
 			required: "Please provide a valid password",
+			passwordButton: true,
 		},
 		{
 			name: "confirmPassword",
 			placeholder: "Password",
-			type: "password",
+			type: passwordShown ? "text" : "password",
 			position: "col-span-2",
 			errorMessage: "Passwords do not match",
 			pattern: watchInput,
 			required: "Please enter a valid password",
+			passwordButton: true,
 		},
 	];
+
+	const togglePassword = () => {
+		setPasswordShown(!passwordShown);
+	};
 
 	async function onSubmit(data) {
 		console.log(data);
@@ -92,6 +99,8 @@ export const ForgotPassword = () => {
 									{...input}
 									error={!!errors[input.name]}
 									helperText={errors[input.name]?.message}
+									showPassword={input.passwordButton}
+									togglePassword={togglePassword}
 								/>
 							);
 						})}

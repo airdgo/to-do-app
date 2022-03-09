@@ -1,3 +1,4 @@
+import { ShowPasswordButton } from "./showPasswordButton";
 import { Validation } from "./Validation";
 
 export const FormInput = ({
@@ -10,6 +11,8 @@ export const FormInput = ({
 	helperText,
 	pattern,
 	required,
+	showPassword,
+	togglePassword,
 }) => {
 	return (
 		<div className={`${position} relative`}>
@@ -24,6 +27,12 @@ export const FormInput = ({
 				placeholder={placeholder}
 				pattern={pattern && pattern.toString().replace(/^\/|\/$/g, "")}
 			/>
+
+			<ShowPasswordButton
+				togglePassword={togglePassword}
+				showPassword={showPassword}
+			/>
+
 			<Validation error={error} helperText={helperText} />
 		</div>
 	);
