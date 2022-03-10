@@ -41,12 +41,16 @@ export const ForgotPassword = () => {
 
 	const watchInput = watch("newPassword", "");
 
-	const [passwordShown, setPasswordShown] = useState(false);
+	const [passwordShown, setPasswordShown] = useState([
+		{ id: 0, showPassword: false },
+		{ id: 1, showPassword: false },
+	]);
+
 	const formInputs = [
 		{
 			name: "newPassword",
 			placeholder: "New Password",
-			type: passwordShown ? "text" : "password",
+			type: passwordShown[0].showPassword ? "text" : "password",
 			position: "col-span-2",
 			errorMessage:
 				"The password must contain 8 or more characters with a mix of letters, numbers & symbols",
@@ -57,7 +61,7 @@ export const ForgotPassword = () => {
 		{
 			name: "confirmPassword",
 			placeholder: "Password",
-			type: passwordShown ? "text" : "password",
+			type: passwordShown[1].showPassword ? "text" : "password",
 			position: "col-span-2",
 			errorMessage: "Passwords do not match",
 			pattern: watchInput,
@@ -66,8 +70,14 @@ export const ForgotPassword = () => {
 		},
 	];
 
-	const togglePassword = () => {
-		setPasswordShown(!passwordShown);
+	const togglePassword = (id) => {
+		const newPasswordShown = passwordShown.map((password) => {
+			return password.id === id
+				? { ...password, showPassword: !password.showPassword }
+				: password;
+		});
+
+		setPasswordShown(newPasswordShown);
 	};
 
 	async function onSubmit(data) {
@@ -100,7 +110,7 @@ export const ForgotPassword = () => {
 									error={!!errors[input.name]}
 									helperText={errors[input.name]?.message}
 									showPassword={input.passwordButton}
-									togglePassword={togglePassword}
+									togglePassword={() => togglePassword(index)}
 								/>
 							);
 						})}
