@@ -11,7 +11,7 @@ import { FormContainer } from "./form-components/FormContainer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-export const ForgotPassword = () => {
+export const ForgotPasswordStep2 = () => {
 	const formSchema = Yup.object().shape({
 		newPassword: Yup.string()
 			.matches(

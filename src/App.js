@@ -1,11 +1,12 @@
 import { Signup } from "./components/authentication/Signup";
 import { Profile } from "./components/authentication/Profile";
 import { Login } from "./components/authentication/Login";
-import { ForgotPassword } from "./components/authentication/ForgotPassword";
+import { ForgotPasswordStep2 } from "./components/authentication/ForgotPasswordStep2";
 import { AuthProvider } from "./context/AuthProvider";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./components/authentication/PrivateRoute";
 import { Dashboard } from "./components/to-do-list/Dashboard";
+import { ForgotPasswordStep1 } from "./components/authentication/ForgotPasswordStep1";
 
 function App() {
 	return (
@@ -37,7 +38,14 @@ function App() {
 						{/* Auth */}
 						<Route path="/signup" element={<Signup />} />
 						<Route path="/login" element={<Login />} />
-						<Route path="/forgot-password" element={<ForgotPassword />} />
+						<Route
+							path="/forgot-password-step-1"
+							element={<ForgotPasswordStep1 />}
+						/>
+						<Route
+							path="/forgot-password-step-2"
+							element={<ForgotPasswordStep2 />}
+						/>
 					</Routes>
 				</AuthProvider>
 			</Router>
