@@ -18,12 +18,13 @@ export const Profile = () => {
 			setError("Failed to log out");
 		}
 	}
+	console.log(currentUser);
 
 	return (
 		<div>
-			{currentUser && <h1>Welcome {currentUser.email}</h1>}
+			{currentUser && <h1>{JSON.stringify(currentUser)}</h1>}
 			<button
-				className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				className="focus:shadow-outline rounded bg-green-500 py-2 px-4 font-bold text-white hover:bg-green-700 focus:outline-none"
 				onClick={handleLogout}
 			>
 				Log Out

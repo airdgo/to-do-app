@@ -37,22 +37,20 @@ export const ForgotPasswordStep1 = () => {
 		register,
 		formState: { errors },
 	} = useForm({ mode: "onChange", resolver: yupResolver(formSchema) });
-	const { login } = useAuth();
+	const { forgotPassword } = useAuth();
 	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 
 	async function onSubmit(data) {
 		console.log(data);
 
-		navigate("/forgot-password-step-2");
-
-		// try {
-		// 	setLoading(true);
-		// 	await login(data.email, data.password);
-		// 	navigate("/");
-		// } catch (error) {
-		// 	console.log(error.message);
-		// }
+		try {
+			setLoading(true);
+			await forgotPassword(data.email);
+			navigate("/login");
+		} catch (error) {
+			console.log(error.message);
+		}
 
 		setLoading(false);
 	}

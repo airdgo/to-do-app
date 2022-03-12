@@ -62,13 +62,13 @@ export const Login = () => {
 	async function onSubmit(data) {
 		console.log(data);
 
-		// try {
-		// 	setLoading(true);
-		// 	await login(data.email, data.password);
-		// 	navigate("/");
-		// } catch (error) {
-		// 	console.log(error.message);
-		// }
+		try {
+			setLoading(true);
+			await login(data.email, data.password);
+			navigate("/");
+		} catch (error) {
+			console.log(error.message);
+		}
 
 		setLoading(false);
 	}
