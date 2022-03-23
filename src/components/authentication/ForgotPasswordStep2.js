@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FormInput } from "./form-components/FormInput";
 import { useForm } from "react-hook-form";
 import { Form } from "./form-components/Form";
@@ -10,6 +10,10 @@ import { AuthFooter } from "./AuthFooter";
 import { FormContainer } from "./form-components/FormContainer";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
+function useQuery() {
+	return new URLSearchParams(useLocation().search);
+}
 
 export const ForgotPasswordStep2 = () => {
 	const formSchema = Yup.object().shape({
@@ -80,16 +84,18 @@ export const ForgotPasswordStep2 = () => {
 		setPasswordShown(newPasswordShown);
 	};
 
+	const query = useQuery();
+
 	async function onSubmit(data) {
 		console.log(data);
 
-		// try {
-		// 	setLoading(true);
-		// 	await login(data.email, data.password);
-		// 	navigate("/");
-		// } catch (error) {
-		// 	console.log(error.message);
-		// }
+		try {
+			setLoading(true);
+			await resetPassword(query.get("oobCode"), data.confirmPassword);
+			navigate("/login");
+		} catch (error) {
+			console.log(error.message);
+		}
 
 		setLoading(false);
 	}
